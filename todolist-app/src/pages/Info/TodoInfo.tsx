@@ -6,14 +6,22 @@ import { TodoItem, defaultTodoItem } from "../../types/TodoTypes";
 
 export const TodoInfo = () => {
   const navigate = useNavigate();
+  const { state: id } = useLocation();
+  const inputRef = useRef<HTMLInputElement>(null);
+  const [data, setData] = useState<TodoItem>(defaultTodoItem);
   const [input, setInput] = useState({
     title: "",
     content: "",
   });
 
-  const { state: id } = useLocation();
-  const inputRef = useRef<HTMLInputElement>(null);
-  const [data, setData] = useState<TodoItem>(defaultTodoItem);
+  useEffect(() => {
+    const fetchData = async () => {
+      const res = await getTodoItem(id);
+      setData(res);
+    };
+    inputRef.current?.focus();
+    fetchData();
+  }, [id]);
 
   const handleInputChange = (
     e:
@@ -45,15 +53,6 @@ export const TodoInfo = () => {
   const moveToHome = () => {
     navigate("/");
   };
-
-  useEffect(() => {
-    const fetchData = async () => {
-      const res = await getTodoItem(id);
-      setData(res);
-    };
-    inputRef.current?.focus();
-    fetchData();
-  }, [id]);
 
   return (
     <PositionWrap>

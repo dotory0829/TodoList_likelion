@@ -1,8 +1,8 @@
 export interface TodoItem {
-  _id: string;
-  title: string;
-  content: string;
-  done: boolean;
+  _id?: string;
+  title?: string;
+  content?: string;
+  done?: boolean;
   createdAt?: string;
   updatedAt?: string;
 }
@@ -15,3 +15,9 @@ export const defaultTodoItem: TodoItem = {
   createdAt: "",
   updatedAt: "",
 };
+
+
+export interface TodoRegistProps {
+  isExpended: boolean;
+  handleToggle: () => void;
+}

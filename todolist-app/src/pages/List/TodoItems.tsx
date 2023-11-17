@@ -6,22 +6,25 @@ import { useEffect, useState } from "react";
 import { UseQueryResult, useQuery } from "@tanstack/react-query";
 import { getTodoList } from "../../api/TodoApi";
 import { TodoItem } from "../../types/TodoTypes";
+import { formattedKorean, formattedToday } from "../../utils/time";
 
 export const TodoItems = () => {
   const navigate = useNavigate();
   const { todoListData } = useTodoData();
   const [filteredItems, setFilteredTodoList] = useState<TodoItem[]>([]);
+  const [today] = useState(() => formattedToday());
 
   const { data, isLoading, isError, error }: UseQueryResult<TodoItem[]> =
     useQuery({
       queryKey: ["mainData"],
       queryFn: getTodoList,
+      refetchOnMount: true
     });
 
   const handleSearch = (target: string) => {
     const filteredItems = data?.filter(
       (item) =>
-        item.title.toLowerCase().includes(target.toLowerCase()) ||
+        item.title!.toLowerCase().includes(target.toLowerCase()) ||
         item?.createdAt!.split(".").join("-").startsWith(target)
     );
 
@@ -29,29 +32,21 @@ export const TodoItems = () => {
   };
 
   useEffect(() => {
-    setFilteredTodoList(todoListData);
-  }, [todoListData]);
+    const defaultFilteredItems = todoListData.filter((item) =>
+      item.createdAt!.split(" ")[0].startsWith(today.split(" ")[0])
+    );
+    setFilteredTodoList(defaultFilteredItems);
+  }, [todoListData, today, data]);
 
   const movoToInfo = (id: string): void => {
     navigate(`/info/${id}`, { state: id });
   };
 
-  const formattedDate = (target: string): string => {
-    return new Date(target).toLocaleString("ko-KR", {
-      year: "numeric",
-      month: "long",
-      day: "numeric",
-      hour: "numeric",
-      minute: "numeric",
-      hour12: true,
-    });
-  };
-
   const getListData = () => {
     return filteredItems?.slice(0).map((item) => (
-      <ItemContainer key={item._id} onClick={() => movoToInfo(item._id)}>
-        <TitleBox onClick={() => movoToInfo(item._id)}>{item.title}</TitleBox>
-        <DateBox>{formattedDate(item.createdAt!)}</DateBox>
+      <ItemContainer key={item._id} onClick={() => movoToInfo(item._id!)}>
+        <TitleBox onClick={() => movoToInfo(item._id!)}>{item.title}</TitleBox>
+        <DateBox>{formattedKorean(item.createdAt!)}</DateBox>
       </ItemContainer>
     ));
   };
