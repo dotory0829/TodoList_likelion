@@ -28,8 +28,7 @@ export const useTodoSubmit = () => {
     }
     try {
       const res = await createTodo(title, content);
-      alert("등록되었습니다.");
-      return res.data
+      return res;
     } catch (error) {
       console.error(error);
     }

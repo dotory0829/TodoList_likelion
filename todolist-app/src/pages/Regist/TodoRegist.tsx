@@ -1,11 +1,8 @@
 import { useEffect, useRef } from "react";
 import styled from "styled-components";
 import { useRegistForm, useTodoSubmit } from "../../hooks/useRegist";
+import { TodoRegistProps } from "../../types/TodoTypes";
 
-interface TodoRegistProps {
-  isExpended: boolean;
-  handleToggle: () => void;
-}
 export const TodoRegist: React.FC<TodoRegistProps> = ({
   isExpended,
   handleToggle,
@@ -17,7 +14,11 @@ export const TodoRegist: React.FC<TodoRegistProps> = ({
 
   const handleSubmit = async (e: React.FormEvent<HTMLFormElement>) => {
     e.preventDefault();
-    await handleSubmitForm(titleInput, contentInput);
+    const res = await handleSubmitForm(titleInput, contentInput);
+    if (res.ok) {
+      alert("등록되었습니다.");
+      window.location.reload();
+    }
   };
 
   const inputRef = useRef<HTMLInputElement>(null);
